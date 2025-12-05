@@ -11,17 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+
 import com.mascot.app.ui.home.HomeScreen
 import com.mascot.app.ui.quest.QuestScreen
+import com.mascot.app.ui.quest.QuestDetailScreen
 import com.mascot.app.ui.ar.ARScreen
 import com.mascot.app.ui.encyclopedia.EncyclopediaScreen
+
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Home : Screen("home", "홈", Icons.Default.Home)
@@ -80,15 +87,19 @@ fun MascotApp() {
             composable(Screen.Encyclopedia.route) { EncyclopediaScreen(navController) }
 
             composable(
-                route = Screen.Detail.route, // "quest_detail/{questId}"
+                route = Screen.Detail.route,   // "quest_detail/{questId}"
                 arguments = listOf(
-                    androidx.navigation.navArgument("questId") { type = androidx.navigation.NavType.IntType }
+                    navArgument("questId") {
+                        type = NavType.StringType
+                    }
                 )
             ) { backStackEntry ->
-                val questId = backStackEntry.arguments?.getInt("questId") ?: 0
 
-                com.mascot.app.ui.quest.QuestDetailScreen(navController, questId)
+                val questId = backStackEntry.arguments?.getString("questId") ?: "0"
+
+                QuestDetailScreen(navController, questId)
             }
+
         }
     }
 }
