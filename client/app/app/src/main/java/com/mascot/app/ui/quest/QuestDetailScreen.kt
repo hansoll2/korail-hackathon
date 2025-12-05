@@ -6,7 +6,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,14 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage // ★ Coil 임포트 필수
-import com.mascot.app.R
+// Coil(AsyncImage)은 이미지를 뺐으므로 이 화면에선 안 쓰지만, 다른 곳에서 쓸 수 있으니 import는 놔둬도 됩니다.
+import coil.compose.AsyncImage
 import com.mascot.app.data.model.Quest
 import kotlinx.coroutines.delay
 import androidx.compose.foundation.background
@@ -29,8 +26,8 @@ import androidx.compose.foundation.background
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestDetailScreen(navController: NavController, questId: Int) {
-    // 임시 데이터 가져오기 (없으면 에러 방지용 기본값)
-    val quest = getDummyQuestById(questId) ?: Quest(0, "로딩 실패", "데이터 없음", "https://via.placeholder.com/150", false)
+    // 임시 데이터 가져오기
+    val quest = getDummyQuestById(questId) ?: Quest(0, "로딩 실패", "데이터 없음", "", false)
 
     var verificationState by remember { mutableStateOf(0) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -83,27 +80,13 @@ fun QuestDetailScreen(navController: NavController, questId: Int) {
         }
 
         Column(
-            modifier = Modifier.padding(innerPadding).verticalScroll(rememberScrollState()).padding(24.dp)
+            modifier = Modifier
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp)
         ) {
-            // (1) 이미지 영역 - AsyncImage로 교체됨!
-            Card(
-                modifier = Modifier.fillMaxWidth().height(240.dp),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                AsyncImage(
-                    model = quest.imageUrl, // ★ URL 사용
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
-                    placeholder = painterResource(id = R.drawable.mascot_image),
-                    error = painterResource(id = R.drawable.mascot_image)
-                )
-            }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // (2) 뱃지
+            Spacer(modifier = Modifier.height(10.dp)) // 상단바와의 약간의 간격
             Row {
                 BadgeText(text = "난이도 ⭐⭐")
                 Spacer(modifier = Modifier.width(8.dp))
@@ -112,7 +95,7 @@ fun QuestDetailScreen(navController: NavController, questId: Int) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // (3) 제목 & 설명
+            // 3. 제목 & 설명
             Text(text = quest.title, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -123,7 +106,7 @@ fun QuestDetailScreen(navController: NavController, questId: Int) {
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            HorizontalDivider()
+            HorizontalDivider() // 구분선
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(text = "미션 가이드", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
@@ -140,14 +123,13 @@ fun BadgeText(text: String, color: Color = Color(0xFFE3F2FD), textColor: Color =
     }
 }
 
-// ★ 더미 데이터도 URL 버전으로 수정됨
+// 더미 데이터 함수 (그대로 유지)
 fun getDummyQuestById(id: Int): Quest? {
     val allDummies = listOf(
-        Quest(1, "성심당 튀김소보로 구매", "대전의 명물! 갓 튀긴 튀김소보로를 구매하고 인증샷을 찍으세요.", "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"),
-        Quest(2, "엑스포 다리 건너기", "야경을 배경으로 마스코트와 사진 찍기", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Expo_Bridge.jpg/640px-Expo_Bridge.jpg"),
-        Quest(3, "오월드 사파리 구경", "동물 친구들을 만나보세요!", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Daejeon_Station_20180915.jpg/640px-Daejeon_Station_20180915.jpg"),
-        Quest(0, "대전역 가락국수 먹기", "출출하시죠? 대전역의 명물 가락국수 한 그릇 어때요?", "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Daejeon_Station_20180915.jpg/640px-Daejeon_Station_20180915.jpg")
+        Quest(1, "성심당 튀김소보로 구매", "대전의 명물! 갓 튀긴 튀김소보로를 구매하고 인증샷을 찍으세요.", "https://via.placeholder.com/150"),
+        Quest(2, "엑스포 다리 건너기", "야경을 배경으로 마스코트와 사진 찍기", "https://via.placeholder.com/150"),
+        Quest(3, "오월드 사파리 구경", "동물 친구들을 만나보세요!", "https://via.placeholder.com/150"),
+        Quest(0, "대전역 가락국수 먹기", "출출하시죠? 대전역의 명물 가락국수 한 그릇 어때요?", "https://via.placeholder.com/150")
     )
-
     return allDummies.find { it.id == id } ?: allDummies.firstOrNull()
 }
