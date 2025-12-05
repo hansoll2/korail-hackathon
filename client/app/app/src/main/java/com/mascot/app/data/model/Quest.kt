@@ -1,9 +1,13 @@
 package com.mascot.app.data.model
 
 data class Quest(
-    val id: Int,
-    val title: String,       // 퀘스트 제목
-    val description: String, // 설명
-    val imageUrl: String,
-    val isCompleted: Boolean = false // 완료 여부
+    val id: String,
+    val title: String,
+    val description: String,
+    val location: String? = null,
+    val duration: String? = null,
+    val type: String? = null,
+    val imageUrl: String? = null,
+    val isCompleted: Boolean = false
 )
+
