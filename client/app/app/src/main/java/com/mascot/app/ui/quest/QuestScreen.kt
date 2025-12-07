@@ -55,8 +55,10 @@ fun QuestScreen(navController: NavController, viewModel: QuestViewModel = androi
                         themes.forEach { theme ->
                             OutlinedButton(
                                 onClick = {
+                                    println(">>> 버튼 클릭됨! theme = $theme")
                                     selectedTheme = theme
                                     viewModel.requestQuests(theme)
+                                    println(">>> requestQuests 호출됨")
                                     showPreferenceDialog = false
                                 },
                                 modifier = Modifier.fillMaxWidth()

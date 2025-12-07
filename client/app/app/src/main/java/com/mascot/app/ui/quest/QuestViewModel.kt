@@ -20,7 +20,9 @@ class QuestViewModel : ViewModel() {
     val loading = _loading.asStateFlow()
 
     fun requestQuests(theme: String) {
+        println(">>> requestQuests() 실행됨, theme=$theme")
         viewModelScope.launch {
+            println(">>> Coroutine 시작됨")
             _loading.value = true
 
             val userInfo = mapOf(
