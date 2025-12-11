@@ -1,73 +1,82 @@
 package com.mascot.app.ui.home
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.shape.RoundedCornerShape // 추가됨
+import androidx.compose.material3.Surface // 추가됨
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.Image
-import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.sp
 import com.mascot.app.R
 
 @Composable
-fun HomeLockedScreen(onGoToAR: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+fun HomeLockedScreen(
+    onGoToAR: () -> Unit
+) {
+    // 상자 두근거림 애니메이션
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f, targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(animation = tween(1000), repeatMode = RepeatMode.Reverse),
+        label = "scale"
+    )
 
-        // 🔹 방 배경 + 블러 처리
+    Box(modifier = Modifier.fillMaxSize()) {
+        // 1. 전체 배경 (꽉 차게)
         Image(
-            painter = painterResource(id = R.drawable.room_background_light),
+            painter = painterResource(id = R.drawable.bg_room_final),
             contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .blur(30.dp),   // 🔥 블러 강도
-            alpha = 0.6f
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.FillBounds
         )
 
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(120.dp))
 
-            Text(
-                "아직 마스코트를 발견하지 않았어요!",
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                "AR 모드에서 주변을 스캔해\n마스코트를 찾아보세요!",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // 🔹 AR 이동 버튼
-            Button(
-                onClick = onGoToAR,
-                modifier = Modifier
-                    .height(56.dp)
-                    .fillMaxWidth(0.6f),
-                shape = RoundedCornerShape(12.dp)
+            // ✨ SpeechBubble 제거 -> 일반 텍스트 디자인으로 변경
+            // (배경 없이 깔끔하게 텍스트만 띄우거나, 간단한 박스 처리)
+            Surface(
+                color = Color.White.copy(alpha = 0.9f),
+                shape = RoundedCornerShape(20.dp),
+                shadowElevation = 2.dp
             ) {
-                Text("AR 모드로 이동", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = "이 상자 안에 누가 있을까?",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.DarkGray,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
+                )
             }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // 2. 중앙: 미스터리 상자
+            Image(
+                painter = painterResource(id = R.drawable.img_mystery_box),
+                contentDescription = "Box",
+                modifier = Modifier
+                    .size(160.dp)
+                    .scale(scale)
+                    .offset(y = 150.dp) // ✨ 아까 요청하신 대로 바닥 쪽으로 내림
+                    .clickable { onGoToAR() }
+            )
+
+            Spacer(modifier = Modifier.weight(1.5f))
         }
     }
 }
