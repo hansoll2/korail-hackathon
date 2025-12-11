@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import com.mascot.app.ui.MascotApp
 import com.mascot.app.ui.theme.MascotTheme
 import dagger.hilt.android.AndroidEntryPoint
+import com.mascot.app.data.encyclopediadata.initial.DataInitializer
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

@@ -47,8 +47,6 @@ fun HomeLockedScreen(
         ) {
             Spacer(modifier = Modifier.height(120.dp))
 
-            // ✨ SpeechBubble 제거 -> 일반 텍스트 디자인으로 변경
-            // (배경 없이 깔끔하게 텍스트만 띄우거나, 간단한 박스 처리)
             Surface(
                 color = Color.White.copy(alpha = 0.9f),
                 shape = RoundedCornerShape(20.dp),
