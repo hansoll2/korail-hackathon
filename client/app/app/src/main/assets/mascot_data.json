@@ -53,6 +53,19 @@
       }
     },
     {
+      "id": 10,
+      "name": "예산",
+      "region": "충청도",
+      "mascot": {
+        "id": 10001,
+        "name": "예돌이",
+        "region": "예산",
+        "description": "예산군의 대표 특산물인 사과를 모티브로 만든 캐릭터로, 밝고 친근한 모습으로 예산군을 상징하는 마스코트.",
+        "imageUrl": "yedori",
+        "isCollected": false
+      }
+    },
+    {
       "id": 5,
       "name": "서울",
       "region": "서울",

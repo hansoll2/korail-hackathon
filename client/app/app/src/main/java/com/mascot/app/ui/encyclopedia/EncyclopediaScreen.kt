@@ -22,6 +22,9 @@ import com.mascot.app.data.encyclopediadata.entity.ZoneEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.layout.ContentScale
 
 
 @Composable
@@ -127,27 +130,68 @@ fun MascotCard(
     cardWidth: Dp,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+
+    // 실제 이미지 리소스 ID
+    val imageId = remember {
+        context.resources.getIdentifier(mascot.imageUrl, "drawable", context.packageName)
+    }
+
+    // 실루엣 이미지 리소스 ID
+    val silhouetteId = remember {
+        context.resources.getIdentifier("${mascot.imageUrl}_silhouette", "drawable", context.packageName)
+    }
+
+    // 상황에 맞는 최종 이미지 선택
+    val finalImageId =
+        if (mascot.isCollected && imageId != 0) imageId
+        else if (!mascot.isCollected && silhouetteId != 0) silhouetteId
+        else 0 // 이미지 없는 경우
+
     Column(
         modifier = Modifier
             .width(cardWidth)
             .clickable { onClick() },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // 이미지 배경 박스 (정사각형)
         Box(
             modifier = Modifier
                 .size(100.dp)
-                .background(Color.White)
-        )
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+
+            if (finalImageId != 0) {
+                Image(
+                    painter = painterResource(id = finalImageId),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize(0.75f), // 이미지 크기 완전 통일 포인트!
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Text(zone.name, color = Color.White, fontWeight = FontWeight.Bold)
         Text(
-            if (mascot.isCollected) "수집됨" else "미수집",
+            mascot.name,
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
+
+        Text(
+            mascot.region,
             color = Color.Gray
         )
     }
 }
+
+
+
+
 
 
 @Composable
