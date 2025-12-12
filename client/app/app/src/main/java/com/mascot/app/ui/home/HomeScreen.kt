@@ -23,7 +23,7 @@ fun HomeScreen(
                 .padding(padding)
         ) {
             when (homeState) {
-                /** 🔒 1. 마스코트 없음 → 잠금 화면 (상자) */
+                /**  1. 마스코트 없음 → 잠금 화면 (상자) */
                 HomeState.LOCKED -> {
                     HomeLockedScreen(
                         onGoToAR = {
@@ -34,22 +34,21 @@ fun HomeScreen(
                     )
                 }
 
-                /** ✨ 2. 첫 마스코트 획득 → 등장 애니메이션 */
+                /**  2. 첫 마스코트 획득 → 등장 애니메이션 */
                 HomeState.FIRST_ENTER -> {
                     NewFriendPopup(
                         onDismiss = { viewModel.finishFirstEnter() }
                     )
                 }
 
-                /** 🏠 3. 마스코트 보유 → 방 꾸미기 화면 */
+                /**  3. 마스코트 보유 → 방 꾸미기 화면 */
                 HomeState.ROOM -> {
                     // 방과 오브제를 보여줍니다.
                     MascotRoom(
                         objects = objects,
                         onQuestTest = {
-                            // [테스트용] 클릭 시 튀김소보로 획득
-                            viewModel.completeQuest("튀김소보로")
-                        }
+                            // 클릭시 오브제 획득
+                            viewModel.debugProgressQuest()                        }
                     )
                 }
             }

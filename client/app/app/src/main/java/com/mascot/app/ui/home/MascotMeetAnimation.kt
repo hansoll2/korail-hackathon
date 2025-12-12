@@ -65,7 +65,7 @@ fun NewFriendPopup(
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Image(
-                        painter = painterResource(id = R.drawable.char_kumdori),
+                        painter = painterResource(id = R.drawable.kum2),
 
                         contentDescription = "꿈돌이",
                         modifier = Modifier.size(140.dp)
