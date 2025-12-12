@@ -74,7 +74,7 @@ fun TutorialStartScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.mascot_image),
+                painter = painterResource(id = R.drawable.char_kumdori),
                 contentDescription = "Mascot",
                 modifier = Modifier.size(300.dp)
             )
