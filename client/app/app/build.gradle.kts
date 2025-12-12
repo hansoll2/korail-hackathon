@@ -67,10 +67,16 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("androidx.compose.foundation:foundation")
     implementation("io.coil-kt:coil-compose:2.6.0")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
+    // Navigation (네비게이션 바 때문에 필요)
     implementation("androidx.navigation:navigation-compose:2.8.0")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,9 +84,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
 }
 
 kapt {
