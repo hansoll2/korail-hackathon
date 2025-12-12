@@ -82,7 +82,7 @@ fun MascotApp() {
 
             composable(Screen.Encyclopedia.route) {
                 Box(modifier = Modifier.padding(bottom = 80.dp)) {
-                    EncyclopediaScreen()
+                    EncyclopediaScreen(navController)
                 }
             }
 
