@@ -32,6 +32,7 @@ import com.mascot.app.ui.quest.QuestScreen
 import com.mascot.app.ui.quest.QuestDetailScreen
 import com.mascot.app.ui.ar.ARScreen
 import com.mascot.app.ui.encyclopedia.EncyclopediaScreen
+import com.mascot.app.ui.tutorial.TutorialStartScreen
 
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Home : Screen("home", "홈", Icons.Default.Home)
@@ -73,6 +74,9 @@ fun MascotApp() {
                     QuestScreen(navController)
                 }
             }
+            composable("tutorial_start") {
+                TutorialStartScreen(navController)
+            }
 
             composable(Screen.AR.route) {
                 Box(modifier = Modifier.padding(bottom = 80.dp)) {
@@ -91,13 +95,17 @@ fun MascotApp() {
                 arguments = listOf(navArgument("questId") { type = NavType.StringType })
             ) { backStackEntry ->
                 val questId = backStackEntry.arguments?.getString("questId") ?: "0"
+
                 Box(modifier = Modifier.padding(bottom = 80.dp)) {
-                    QuestDetailScreen(navController, questId)
+                    QuestDetailScreen(
+                        navController = navController,
+                        questId = questId.toIntOrNull()
+                    )
                 }
             }
         }
 
-        // 2. 네비게이션 바 (화면 위에 덮어씌움)
+            // 2. 네비게이션 바 (화면 위에 덮어씌움)
         NavigationBar(
             modifier = Modifier.align(Alignment.BottomCenter), // 화면 바닥에 고정
             containerColor = NavigationBarDefaults.containerColor, // 원래 배경색 유지 (투명 X)

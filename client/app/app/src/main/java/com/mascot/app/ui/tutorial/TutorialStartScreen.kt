@@ -16,6 +16,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mascot.app.R
+import com.mascot.app.data.tutorial.TutorialData
+import android.util.Log
+
+
 
 @Composable
 fun TutorialStartScreen(navController: NavController) {
@@ -81,6 +85,9 @@ fun TutorialStartScreen(navController: NavController) {
             if (step == 1) {
                 Button(
                     onClick = { step = 2 },
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(220.dp)
                     modifier = Modifier.height(50.dp).width(220.dp)
                 ) { Text("좋아!", color = Color.White) }
 
@@ -88,6 +95,9 @@ fun TutorialStartScreen(navController: NavController) {
 
                 Button(
                     onClick = { navController.popBackStack() },
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(220.dp),
                     modifier = Modifier.height(50.dp).width(220.dp),
                     colors = ButtonDefaults.buttonColors(Color.Gray)
                 ) { Text("잠시만...", color = Color.White) }
@@ -100,6 +110,9 @@ fun TutorialStartScreen(navController: NavController) {
                     onValueChange = { name = it },
                     label = { Text("이름 입력") },
                     singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 40.dp)
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                 )
 
@@ -108,6 +121,9 @@ fun TutorialStartScreen(navController: NavController) {
                 Button(
                     onClick = { step = 3 },
                     enabled = name.isNotEmpty(),
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(200.dp)
                     modifier = Modifier.height(50.dp).width(200.dp)
                 ) { Text("다음", color = Color.White) }
             }
@@ -184,6 +200,9 @@ fun TutorialStartScreen(navController: NavController) {
                         value = purposeCustom,
                         onValueChange = { purposeCustom = it },
                         label = { Text("기타 입력") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 40.dp)
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                     )
                 }
@@ -227,6 +246,9 @@ fun TutorialStartScreen(navController: NavController) {
                         value = companionCustom,
                         onValueChange = { companionCustom = it },
                         label = { Text("기타 입력") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 40.dp)
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                     )
                 }
@@ -234,12 +256,31 @@ fun TutorialStartScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
+                    onClick = {
+                        // 1) 튜토리얼 결과를 한 객체로 묶기
+                        val tutorialData = TutorialData(
+                            name = name,
+                            ageRange = ageRange,
+                            gender = gender,
+                            purposes = purposeList.toList(),
+                            companions = companionList.toList(),
+                            customPurpose = purposeCustom.ifBlank { null },
+                            customCompanion = companionCustom.ifBlank { null }
+                        )
+
+                        // 2) 지금은 일단 로그로 확인 (다음 단계에서 서버로 보낼 거임)
+                        Log.d("Tutorial", "tutorialData = $tutorialData")
+
+                        // 3) 원래 하던 대로 퀘스트 화면으로 이동
+                        navController.navigate("quest")
+                    },
                     onClick = { navController.navigate("quest") },
                     enabled = companionList.isNotEmpty(),
                     modifier = Modifier
                         .width(200.dp)
                         .padding(bottom = 40.dp)
                 ) { Text("완료!", color = Color.White) }
+
             }
         }
     }
@@ -250,6 +291,10 @@ fun TutorialStartScreen(navController: NavController) {
 fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
     Button(
         onClick = onClick,
+        modifier = Modifier
+            .width(140.dp)
+            .height(50.dp)
+            .padding(6.dp),
         modifier = Modifier.width(140.dp).height(50.dp).padding(6.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
@@ -263,6 +308,10 @@ fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
 fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
     Button(
         onClick = onClick,
+        modifier = Modifier
+            .width(110.dp)
+            .height(45.dp)
+            .padding(4.dp),
         modifier = Modifier.width(110.dp).height(45.dp).padding(4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor =
@@ -270,4 +319,5 @@ fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
         ),
         shape = RoundedCornerShape(10.dp)
     ) { Text(text, color = Color.White) }
+}
 }
