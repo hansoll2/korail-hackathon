@@ -1,0 +1,121 @@
+{
+  "zones": [
+    {
+      "id": 1,
+      "name": "대전",
+      "region": "충청도",
+      "mascot": {
+        "id": 1001,
+        "name": "꿈돌이",
+        "region": "대전",
+        "description": "1993 대전세계박람회에서 탄생한 과학도시 대전을 상징하는 대표 캐릭터.",
+        "imageUrl": "ggumdori",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 2,
+      "name": "세종",
+      "region": "충청도",
+      "mascot": {
+        "id": 2001,
+        "name": "충녕이",
+        "region": "세종",
+        "description": "세종대왕의 젊은 시절 ‘충녕대군’을 모티브로 한 세종특별자치시 대표 캐릭터.",
+        "imageUrl": "chungnyeongi",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 3,
+      "name": "천안",
+      "region": "충청도",
+      "mascot": {
+        "id": 3001,
+        "name": "나랑이",
+        "region": "천안",
+        "description": "유관순 열사를 현대적으로 재해석한 애국소녀 콘셉트의 천안시 공식 마스코트.",
+        "imageUrl": "narangi",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 4,
+      "name": "충주",
+      "region": "충청도",
+      "mascot": {
+        "id": 4001,
+        "name": "충주씨",
+        "region": "충주",
+        "description": "충주 농산물과 청정 이미지를 형상화해 건강함을 상징하는 지역 마스코트.",
+        "imageUrl": "chungjussi",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 5,
+      "name": "서울",
+      "region": "서울",
+      "mascot": {
+        "id": 5001,
+        "name": "해치",
+        "region": "서울",
+        "description": "전통 상상의 동물 해치를 현대적으로 표현한 서울시 공식 상징 캐릭터.",
+        "imageUrl": "haechi",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 6,
+      "name": "인천",
+      "region": "수도권",
+      "mascot": {
+        "id": 6001,
+        "name": "등대리",
+        "region": "인천",
+        "description": "팔미도 등대를 모티브로 제작된 인천 대표 캐릭터.",
+        "imageUrl": "deungdaeri",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 7,
+      "name": "의정부",
+      "region": "수도권",
+      "mascot": {
+        "id": 7001,
+        "name": "의돌이",
+        "region": "의정부",
+        "description": "‘의정부’와 ‘돌(굳건함)’을 결합해 만든 의정부시 공식 홍보 캐릭터.",
+        "imageUrl": "uidori",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 8,
+      "name": "수원",
+      "region": "수도권",
+      "mascot": {
+        "id": 8001,
+        "name": "수원이",
+        "region": "수원",
+        "description": "토종 수원청개구리를 모티브로 한 친근한 수원시 마스코트.",
+        "imageUrl": "suwoni",
+        "isCollected": false
+      }
+    },
+    {
+      "id": 9,
+      "name": "평택",
+      "region": "수도권",
+      "mascot": {
+        "id": 9001,
+        "name": "평택이",
+        "region": "평택",
+        "description": "평택시를 상징하도록 제작된, 도시 정체성을 담은 공식 마스코트.",
+        "imageUrl": "pyeongtaeki",
+        "isCollected": false
+      }
+    }
+  ]
+}
