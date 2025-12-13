@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,14 +60,15 @@ fun NewFriendPopup(
                     // 타이틀
                     Text(
                         text = "새로운 친구 등장!",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.titleSmall,
-                        color = Color.Gray
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
 
                     Image(
-                        painter = painterResource(id = R.drawable.char_kumdori),
+                        painter = painterResource(id = R.drawable.kum1),
 
                         contentDescription = "꿈돌이",
                         modifier = Modifier.size(140.dp)
@@ -75,7 +78,7 @@ fun NewFriendPopup(
 
                     // 메인 텍스트
                     Text(
-                        text = "대전의 마스코트\n꿈돌이",
+                        text = "꿈돌이",
                         style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -85,10 +88,9 @@ fun NewFriendPopup(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = "꿈돌이가 친구가 되었어요!\n이제 함께 여행해요.",
+                        text = "꿈돌이가 친구가 되었어요!",
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
-                        color = Color.Gray
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -98,8 +100,55 @@ fun NewFriendPopup(
                         onClick = { onDismiss() },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("반가워!")
+                        Text("확인")
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RaffleTicketPopup(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = { }) {
+        Card(
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            modifier = Modifier.padding(10.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "퀘스트 완료!",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFFF9800) // 주황색 포인트
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.ticket),
+                    contentDescription = "응모권",
+                    modifier = Modifier.width(180.dp)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "응모권 획득!",
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFD260))
+                ) {
+                    Text("확인", color = Color.Black, fontWeight = FontWeight.Bold)
                 }
             }
         }

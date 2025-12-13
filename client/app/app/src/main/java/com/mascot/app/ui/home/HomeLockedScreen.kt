@@ -4,8 +4,10 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape // 추가됨
-import androidx.compose.material3.Surface // 추가됨
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mascot.app.R
@@ -24,7 +27,6 @@ import com.mascot.app.R
 fun HomeLockedScreen(
     onGoToAR: () -> Unit
 ) {
-    // 상자 두근거림 애니메이션
     val infiniteTransition = rememberInfiniteTransition(label = "pulse")
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f, targetValue = 1.05f,
@@ -33,7 +35,6 @@ fun HomeLockedScreen(
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // 1. 전체 배경 (꽉 차게)
         Image(
             painter = painterResource(id = R.drawable.bg_room_final),
             contentDescription = null,
@@ -45,7 +46,7 @@ fun HomeLockedScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(120.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             Surface(
                 color = Color.White.copy(alpha = 0.9f),
@@ -53,7 +54,8 @@ fun HomeLockedScreen(
                 shadowElevation = 2.dp
             ) {
                 Text(
-                    text = "이 상자 안에 누가 있을까?",
+                    text = "두근두근\n어떤 친구가 있을까요?",
+                    textAlign = TextAlign.Center,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.DarkGray,
@@ -61,20 +63,38 @@ fun HomeLockedScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // 2. 중앙: 미스터리 상자
             Image(
                 painter = painterResource(id = R.drawable.img_mystery_box),
                 contentDescription = "Box",
                 modifier = Modifier
-                    .size(160.dp)
+                    .size(300.dp)
                     .scale(scale)
-                    .offset(y = 150.dp) // ✨ 아까 요청하신 대로 바닥 쪽으로 내림
+                    .offset(y = 50.dp)
                     .clickable { onGoToAR() }
             )
 
-            Spacer(modifier = Modifier.weight(1.5f))
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Button(
+                onClick = onGoToAR,
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9800)), // 주황색 포인트
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.7f) // 너비 70%
+                    .height(56.dp)
+            ) {
+                Text(
+                    text = "AR로 찾으러 가기",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

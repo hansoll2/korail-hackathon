@@ -1,5 +1,6 @@
 package com.mascot.app.ui.tutorial
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,7 +22,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.util.Log
 
 @Composable
 fun TutorialStartScreen(navController: NavController) {
@@ -35,14 +35,14 @@ fun TutorialStartScreen(navController: NavController) {
     val purposeList = remember { mutableStateListOf<String>() }
     val companionList = remember { mutableStateListOf<String>() }
 
-    // 🔥 임시 userId
-    val userId = "test-user"
+    var purposeCustom by remember { mutableStateOf("") }
+    var companionCustom by remember { mutableStateOf("") }
 
-    // 🔥 퀘스트 생성중 상태
+    val userId = "test-user"
     var isGenerating by remember { mutableStateOf(false) }
 
     val bubbleText = when (step) {
-        1 -> "안녕 난 꿈돌이야 대전에 온 걸 환영해!\n맞춤 퀘스트 만들기 튜토리얼을 시작할게"
+        1 -> "안녕 난 꿈돌이야!\n맞춤 퀘스트 만들기 튜토리얼을 시작할게"
         2 -> "먼저 너의 이름을 알려줄래?"
         3 -> "연령대를 선택해줘"
         4 -> "성별을 선택해줘"
@@ -57,7 +57,6 @@ fun TutorialStartScreen(navController: NavController) {
             .background(Color(0xFFF3F3F3))
     ) {
 
-        /* ================== 튜토리얼 UI ================== */
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -78,7 +77,7 @@ fun TutorialStartScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.char_kumdori),
+                painter = painterResource(id = R.drawable.kum1),
                 contentDescription = "Mascot",
                 modifier = Modifier.size(300.dp)
             )
@@ -89,8 +88,20 @@ fun TutorialStartScreen(navController: NavController) {
             if (step == 1) {
                 Button(
                     onClick = { step = 2 },
-                    modifier = Modifier.width(220.dp).height(50.dp)
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(220.dp)
                 ) { Text("좋아!", color = Color.White) }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Button(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(220.dp),
+                    colors = ButtonDefaults.buttonColors(Color.Gray)
+                ) { Text("잠시만...", color = Color.White) }
             }
 
             /* ---------- Step 2 ---------- */
@@ -99,15 +110,21 @@ fun TutorialStartScreen(navController: NavController) {
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("이름 입력") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 40.dp)
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = { step = 3 },
-                    enabled = name.isNotEmpty()
-                ) { Text("다음") }
+                    enabled = name.isNotEmpty(),
+                    modifier = Modifier
+                        .height(50.dp)
+                        .width(200.dp)
+                ) { Text("다음", color = Color.White) }
             }
 
             /* ---------- Step 3 ---------- */
@@ -127,32 +144,45 @@ fun TutorialStartScreen(navController: NavController) {
 
             /* ---------- Step 4 ---------- */
             if (step == 4) {
-                listOf("남성", "여성", "선택 안 함")
-                    .chunked(2).forEach { row ->
-                        Row(horizontalArrangement = Arrangement.Center) {
-                            row.forEach {
-                                SelectButtonBlue(it, gender == it) {
-                                    gender = it
-                                    step = 5
-                                }
+                val genders = listOf("남성", "여성", "선택하지 않음")
+                genders.chunked(2).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        row.forEach { option ->
+                            SelectButtonBlue(option, gender == option) {
+                                gender = option
+                                step = 5
                             }
                         }
                     }
+                }
             }
 
             /* ---------- Step 5 ---------- */
             if (step == 5) {
-                listOf("관광", "휴식", "사진", "맛집", "체험", "기타")
-                    .chunked(3).forEach { row ->
-                        Row(horizontalArrangement = Arrangement.Center) {
-                            row.forEach {
-                                ToggleButtonSmall(it, purposeList.contains(it)) {
-                                    if (purposeList.contains(it)) purposeList.remove(it)
-                                    else purposeList.add(it)
-                                }
+                val purposes = listOf("관광", "휴식", "사진", "맛집", "체험", "기타")
+                purposes.chunked(3).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        row.forEach { option ->
+                            ToggleButtonSmall(option, purposeList.contains(option)) {
+                                if (purposeList.contains(option)) purposeList.remove(option)
+                                else purposeList.add(option)
                             }
                         }
                     }
+                }
+
+                if (purposeList.contains("기타")) {
+                    OutlinedTextField(
+                        value = purposeCustom,
+                        onValueChange = { purposeCustom = it },
+                        label = { Text("기타 입력") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 40.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = { step = 6 },
@@ -162,23 +192,36 @@ fun TutorialStartScreen(navController: NavController) {
 
             /* ---------- Step 6 ---------- */
             if (step == 6) {
-                listOf("혼자", "친구", "가족", "연인", "단체", "기타")
-                    .chunked(3).forEach { row ->
-                        Row(horizontalArrangement = Arrangement.Center) {
-                            row.forEach {
-                                ToggleButtonSmall(it, companionList.contains(it)) {
-                                    if (companionList.contains(it)) companionList.remove(it)
-                                    else companionList.add(it)
-                                }
+                val companions = listOf("혼자", "친구", "가족", "연인", "단체", "기타")
+                companions.chunked(3).forEach { row ->
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        row.forEach { option ->
+                            ToggleButtonSmall(option, companionList.contains(option)) {
+                                if (companionList.contains(option)) companionList.remove(option)
+                                else companionList.add(option)
                             }
                         }
                     }
+                }
+
+                if (companionList.contains("기타")) {
+                    OutlinedTextField(
+                        value = companionCustom,
+                        onValueChange = { companionCustom = it },
+                        label = { Text("기타 입력") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 40.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     enabled = companionList.isNotEmpty() && !isGenerating,
                     onClick = {
+                        isGenerating = true
+
                         val tutorialData = TutorialData(
                             userId = userId,
                             name = name,
@@ -188,12 +231,9 @@ fun TutorialStartScreen(navController: NavController) {
                             companions = companionList.toList()
                         )
 
-                        isGenerating = true
-
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
                                 RetrofitModule.questApi.generateQuestAll(tutorialData)
-
                                 withContext(Dispatchers.Main) {
                                     navController.navigate("quest") {
                                         popUpTo("tutorial_start") { inclusive = true }
@@ -207,13 +247,11 @@ fun TutorialStartScreen(navController: NavController) {
                             }
                         }
                     }
-                ) {
-                    Text("완료!", color = Color.White)
-                }
+                ) { Text("완료!", color = Color.White) }
             }
         }
 
-        /* ================== 🔥 생성중 오버레이 (맨 위) ================== */
+        /* ---------- 생성중 오버레이 ---------- */
         if (isGenerating) {
             Box(
                 modifier = Modifier
@@ -224,11 +262,7 @@ fun TutorialStartScreen(navController: NavController) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(color = Color.White)
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "퀘스트 생성중...",
-                        color = Color.White,
-                        fontSize = 18.sp
-                    )
+                    Text("퀘스트 생성중...", color = Color.White, fontSize = 18.sp)
                 }
             }
         }
@@ -241,7 +275,14 @@ fun TutorialStartScreen(navController: NavController) {
 fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.width(140.dp).height(50.dp).padding(6.dp)
+        modifier = Modifier
+            .width(140.dp)
+            .height(50.dp)
+            .padding(6.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
+        shape = RoundedCornerShape(12.dp)
     ) { Text(text, color = Color.White) }
 }
 
@@ -249,7 +290,10 @@ fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
 fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier.width(110.dp).height(45.dp).padding(4.dp),
+        modifier = Modifier
+            .width(110.dp)
+            .height(45.dp)
+            .padding(4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = if (selected) MaterialTheme.colorScheme.primary else Color.Gray
         )
