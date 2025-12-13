@@ -18,12 +18,28 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        // ⭐⭐⭐ [디버깅 코드 시작] ⭐⭐⭐
+        // 앱이 실행될 때, 실제 적용된 패키지명과 Client ID를 강제로 로그에 출력합니다.
+        try {
+            val appInfo = packageManager.getApplicationInfo(packageName, android.content.pm.PackageManager.GET_META_DATA)
+            val myPackageName = packageName
+            val myClientId = appInfo.metaData?.getString("com.naver.maps.map.CLIENT_ID")
+
+            android.util.Log.e("NAVER_DEBUG", "====================================")
+            android.util.Log.e("NAVER_DEBUG", "1. 실제 실행 패키지명: $myPackageName")
+            android.util.Log.e("NAVER_DEBUG", "2. 인식된 Client ID : $myClientId")
+            android.util.Log.e("NAVER_DEBUG", "====================================")
+        } catch (e: Exception) {
+            android.util.Log.e("NAVER_DEBUG", "디버깅 실패: ${e.message}")
+        }
+        // ⭐⭐⭐ [디버깅 코드 끝] ⭐⭐⭐
+
         setContent {
             MascotTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    MascotApp()   // ← 앱 전체 네비게이션이 여기 들어와야 함
+                    MascotApp()
                 }
             }
         }

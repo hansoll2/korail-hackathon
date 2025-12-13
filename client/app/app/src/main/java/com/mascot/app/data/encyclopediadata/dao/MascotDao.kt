@@ -37,4 +37,5 @@ interface MascotDao {
     @Query("SELECT * FROM mascots WHERE id = :id LIMIT 1")
     suspend fun getMascotById(id: Int): MascotEntity?
 
+
 }

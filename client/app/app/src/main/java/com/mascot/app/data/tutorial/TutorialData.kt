@@ -11,3 +11,4 @@ data class TutorialData(
     val customPurpose: String?,     // 기타 목적 텍스트 (없으면 null)
     val customCompanion: String?    // 기타 동행 텍스트 (없으면 null)
 )
+

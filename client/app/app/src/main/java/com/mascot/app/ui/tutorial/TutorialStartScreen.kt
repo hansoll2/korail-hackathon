@@ -74,7 +74,7 @@ fun TutorialStartScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.mascot_image),
+                painter = painterResource(id = R.drawable.char_kumdori),
                 contentDescription = "Mascot",
                 modifier = Modifier.size(300.dp)
             )
@@ -88,7 +88,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .height(50.dp)
                         .width(220.dp)
-                    modifier = Modifier.height(50.dp).width(220.dp)
                 ) { Text("좋아!", color = Color.White) }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -98,7 +97,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .height(50.dp)
                         .width(220.dp),
-                    modifier = Modifier.height(50.dp).width(220.dp),
                     colors = ButtonDefaults.buttonColors(Color.Gray)
                 ) { Text("잠시만...", color = Color.White) }
             }
@@ -113,7 +111,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 40.dp)
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -124,7 +121,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .height(50.dp)
                         .width(200.dp)
-                    modifier = Modifier.height(50.dp).width(200.dp)
                 ) { Text("다음", color = Color.White) }
             }
 
@@ -203,7 +199,6 @@ fun TutorialStartScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 40.dp)
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                     )
                 }
 
@@ -249,7 +244,6 @@ fun TutorialStartScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 40.dp)
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                     )
                 }
 
@@ -274,7 +268,6 @@ fun TutorialStartScreen(navController: NavController) {
                         // 3) 원래 하던 대로 퀘스트 화면으로 이동
                         navController.navigate("quest")
                     },
-                    onClick = { navController.navigate("quest") },
                     enabled = companionList.isNotEmpty(),
                     modifier = Modifier
                         .width(200.dp)
@@ -295,7 +288,6 @@ fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
             .width(140.dp)
             .height(50.dp)
             .padding(6.dp),
-        modifier = Modifier.width(140.dp).height(50.dp).padding(6.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
         ),
@@ -312,12 +304,10 @@ fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
             .width(110.dp)
             .height(45.dp)
             .padding(4.dp),
-        modifier = Modifier.width(110.dp).height(45.dp).padding(4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor =
                 if (selected) MaterialTheme.colorScheme.primary else Color(0xFFBDBDBD)
         ),
         shape = RoundedCornerShape(10.dp)
     ) { Text(text, color = Color.White) }
-}
 }
