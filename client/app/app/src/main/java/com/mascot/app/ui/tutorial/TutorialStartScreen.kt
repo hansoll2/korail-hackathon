@@ -17,6 +17,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mascot.app.R
 import com.mascot.app.data.tutorial.TutorialData
+import com.mascot.app.data.remote.RetrofitModule
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun TutorialStartScreen(navController: NavController) {
@@ -28,18 +33,21 @@ fun TutorialStartScreen(navController: NavController) {
     var gender by remember { mutableStateOf("") }
 
     val purposeList = remember { mutableStateListOf<String>() }
-    var purposeCustom by remember { mutableStateOf("") }
-
     val companionList = remember { mutableStateListOf<String>() }
+
+    var purposeCustom by remember { mutableStateOf("") }
     var companionCustom by remember { mutableStateOf("") }
 
+    val userId = "test-user"
+    var isGenerating by remember { mutableStateOf(false) }
+
     val bubbleText = when (step) {
-        1 -> "안녕 난 꿈돌이야 대전에 온 걸 환영해!\n맞춤 퀘스트 만들기 튜토리얼을 시작할게"
+        1 -> "안녕 난 꿈돌이야!\n맞춤 퀘스트 만들기 튜토리얼을 시작할게"
         2 -> "먼저 너의 이름을 알려줄래?"
         3 -> "연령대를 선택해줘"
         4 -> "성별을 선택해줘"
         5 -> "여행 목적이 뭐야? (다중 선택 가능)"
-        6 -> "누구와 함께 여행 중이야? (다중 선택 가능)"
+        6 -> "함께 여행하는 사람은? (다중 선택 가능)"
         else -> ""
     }
 
@@ -56,7 +64,6 @@ fun TutorialStartScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // ------------------------------ 말풍선 ------------------------------
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -77,7 +84,7 @@ fun TutorialStartScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // ------------------------------ STEP 1 ------------------------------
+            /* ---------- Step 1 ---------- */
             if (step == 1) {
                 Button(
                     onClick = { step = 2 },
@@ -97,7 +104,7 @@ fun TutorialStartScreen(navController: NavController) {
                 ) { Text("잠시만...", color = Color.White) }
             }
 
-            // ------------------------------ STEP 2 — 이름 입력 ------------------------------
+            /* ---------- Step 2 ---------- */
             if (step == 2) {
                 OutlinedTextField(
                     value = name,
@@ -109,7 +116,7 @@ fun TutorialStartScreen(navController: NavController) {
                         .padding(horizontal = 40.dp)
                 )
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
                     onClick = { step = 3 },
@@ -120,42 +127,28 @@ fun TutorialStartScreen(navController: NavController) {
                 ) { Text("다음", color = Color.White) }
             }
 
-            // ------------------------------ STEP 3 — 연령대 ------------------------------
+            /* ---------- Step 3 ---------- */
             if (step == 3) {
-                val ages = listOf("10대 미만", "10대", "20대", "30대", "40대", "50대 이상")
-
-                ages.chunked(2).forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        row.forEach { option ->
-                            SelectButtonBlue(
-                                text = option,
-                                selected = ageRange == option
-                            ) {
-                                ageRange = option
-                                step = 4
+                listOf("10대 미만", "10대", "20대", "30대", "40대", "50대 이상")
+                    .chunked(2).forEach { row ->
+                        Row(horizontalArrangement = Arrangement.Center) {
+                            row.forEach {
+                                SelectButtonBlue(it, ageRange == it) {
+                                    ageRange = it
+                                    step = 4
+                                }
                             }
                         }
                     }
-                }
             }
 
-            // ------------------------------ STEP 4 — 성별 ------------------------------
+            /* ---------- Step 4 ---------- */
             if (step == 4) {
                 val genders = listOf("남성", "여성", "선택하지 않음")
-
                 genders.chunked(2).forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
+                    Row(horizontalArrangement = Arrangement.Center) {
                         row.forEach { option ->
-                            SelectButtonBlue(
-                                text = option,
-                                selected = gender == option
-                            ) {
+                            SelectButtonBlue(option, gender == option) {
                                 gender = option
                                 step = 5
                             }
@@ -164,20 +157,13 @@ fun TutorialStartScreen(navController: NavController) {
                 }
             }
 
-            // ------------------------------ STEP 5 — 여행 목적 ------------------------------
+            /* ---------- Step 5 ---------- */
             if (step == 5) {
                 val purposes = listOf("관광", "휴식", "사진", "맛집", "체험", "기타")
-
                 purposes.chunked(3).forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
+                    Row(horizontalArrangement = Arrangement.Center) {
                         row.forEach { option ->
-                            ToggleButtonSmall(
-                                text = option,
-                                selected = purposeList.contains(option)
-                            ) {
+                            ToggleButtonSmall(option, purposeList.contains(option)) {
                                 if (purposeList.contains(option)) purposeList.remove(option)
                                 else purposeList.add(option)
                             }
@@ -200,27 +186,17 @@ fun TutorialStartScreen(navController: NavController) {
 
                 Button(
                     onClick = { step = 6 },
-                    enabled = purposeList.isNotEmpty(),
-                    modifier = Modifier
-                        .width(200.dp)
-                        .padding(bottom = 40.dp)
-                ) { Text("다음", color = Color.White) }
+                    enabled = purposeList.isNotEmpty()
+                ) { Text("다음") }
             }
 
-            // ------------------------------ STEP 6 — 누구와 함께 ------------------------------
+            /* ---------- Step 6 ---------- */
             if (step == 6) {
                 val companions = listOf("혼자", "친구", "가족", "연인", "단체", "기타")
-
                 companions.chunked(3).forEach { row ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
+                    Row(horizontalArrangement = Arrangement.Center) {
                         row.forEach { option ->
-                            ToggleButtonSmall(
-                                text = option,
-                                selected = companionList.contains(option)
-                            ) {
+                            ToggleButtonSmall(option, companionList.contains(option)) {
                                 if (companionList.contains(option)) companionList.remove(option)
                                 else companionList.add(option)
                             }
@@ -236,42 +212,65 @@ fun TutorialStartScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 40.dp)
-
                     )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
+                    enabled = companionList.isNotEmpty() && !isGenerating,
                     onClick = {
-                        // 1) 튜토리얼 결과를 한 객체로 묶기
+                        isGenerating = true
+
                         val tutorialData = TutorialData(
+                            userId = userId,
                             name = name,
                             ageRange = ageRange,
                             gender = gender,
                             purposes = purposeList.toList(),
-                            companions = companionList.toList(),
-                            customPurpose = purposeCustom.ifBlank { null },
-                            customCompanion = companionCustom.ifBlank { null }
+                            companions = companionList.toList()
                         )
 
-                        // 2) 로그로 확인
-                        Log.d("Tutorial", "tutorialData = $tutorialData")
-
-                        // 3) 퀘스트 화면으로 이동
-                        navController.navigate("quest")
-                    },
-                    enabled = companionList.isNotEmpty(),
-                    modifier = Modifier
-                        .width(200.dp)
-                        .padding(bottom = 40.dp)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                RetrofitModule.questApi.generateQuestAll(tutorialData)
+                                withContext(Dispatchers.Main) {
+                                    navController.navigate("quest") {
+                                        popUpTo("tutorial_start") { inclusive = true }
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.e("TUTORIAL", "서버 요청 실패: ${e.message}")
+                                withContext(Dispatchers.Main) {
+                                    isGenerating = false
+                                }
+                            }
+                        }
+                    }
                 ) { Text("완료!", color = Color.White) }
+            }
+        }
+
+        /* ---------- 생성중 오버레이 ---------- */
+        if (isGenerating) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.6f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator(color = Color.White)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("퀘스트 생성중...", color = Color.White, fontSize = 18.sp)
+                }
             }
         }
     }
 }
 
-/* ------------------ 단일 선택 버튼 ------------------ */
+/* ---------- 버튼 컴포넌트 ---------- */
+
 @Composable
 fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
     Button(
@@ -287,7 +286,6 @@ fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
     ) { Text(text, color = Color.White) }
 }
 
-/* ------------------ 다중 선택 버튼 ------------------ */
 @Composable
 fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
     Button(
@@ -297,9 +295,7 @@ fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
             .height(45.dp)
             .padding(4.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor =
-                if (selected) MaterialTheme.colorScheme.primary else Color(0xFFBDBDBD)
-        ),
-        shape = RoundedCornerShape(10.dp)
+            containerColor = if (selected) MaterialTheme.colorScheme.primary else Color.Gray
+        )
     ) { Text(text, color = Color.White) }
 }

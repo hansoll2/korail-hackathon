@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mascot.app.ui.home.HomeScreen
 import com.mascot.app.ui.quest.QuestScreen
 import com.mascot.app.ui.quest.QuestDetailScreen
+import com.mascot.app.ui.quest.CompletedQuestScreen
 import com.mascot.app.ui.ar.ARScreen
 import com.mascot.app.ui.encyclopedia.EncyclopediaScreen
 import com.mascot.app.ui.tutorial.TutorialStartScreen
@@ -99,10 +100,14 @@ fun MascotApp() {
                 Box(modifier = Modifier.padding(bottom = 80.dp)) {
                     QuestDetailScreen(
                         navController = navController,
-                        questId = questId.toIntOrNull()
+                        questId = questId
                     )
                 }
             }
+            composable("completed_quests") {
+                CompletedQuestScreen(navController = navController)
+            }
+
         }
 
             // 2. 네비게이션 바 (화면 위에 덮어씌움)
