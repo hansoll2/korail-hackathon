@@ -1,10 +1,10 @@
 package com.mascot.app.ui.tutorial
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,9 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mascot.app.R
 import com.mascot.app.data.tutorial.TutorialData
-import android.util.Log
-
-
 
 @Composable
 fun TutorialStartScreen(navController: NavController) {
@@ -70,11 +67,10 @@ fun TutorialStartScreen(navController: NavController) {
                 Text(text = bubbleText, fontSize = 18.sp, textAlign = TextAlign.Center)
             }
 
-            // *** 이미지 위치 올림 ***
             Spacer(modifier = Modifier.height(20.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.char_kumdori),
+                painter = painterResource(id = R.drawable.kum1),
                 contentDescription = "Mascot",
                 modifier = Modifier.size(300.dp)
             )
@@ -88,7 +84,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .height(50.dp)
                         .width(220.dp)
-                    modifier = Modifier.height(50.dp).width(220.dp)
                 ) { Text("좋아!", color = Color.White) }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -98,7 +93,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .height(50.dp)
                         .width(220.dp),
-                    modifier = Modifier.height(50.dp).width(220.dp),
                     colors = ButtonDefaults.buttonColors(Color.Gray)
                 ) { Text("잠시만...", color = Color.White) }
             }
@@ -113,7 +107,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 40.dp)
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -124,7 +117,6 @@ fun TutorialStartScreen(navController: NavController) {
                     modifier = Modifier
                         .height(50.dp)
                         .width(200.dp)
-                    modifier = Modifier.height(50.dp).width(200.dp)
                 ) { Text("다음", color = Color.White) }
             }
 
@@ -152,7 +144,6 @@ fun TutorialStartScreen(navController: NavController) {
 
             // ------------------------------ STEP 4 — 성별 ------------------------------
             if (step == 4) {
-
                 val genders = listOf("남성", "여성", "선택하지 않음")
 
                 genders.chunked(2).forEach { row ->
@@ -175,7 +166,6 @@ fun TutorialStartScreen(navController: NavController) {
 
             // ------------------------------ STEP 5 — 여행 목적 ------------------------------
             if (step == 5) {
-
                 val purposes = listOf("관광", "휴식", "사진", "맛집", "체험", "기타")
 
                 purposes.chunked(3).forEach { row ->
@@ -203,13 +193,11 @@ fun TutorialStartScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 40.dp)
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // *** 버튼 아래 공간 확보 ***
                 Button(
                     onClick = { step = 6 },
                     enabled = purposeList.isNotEmpty(),
@@ -221,7 +209,6 @@ fun TutorialStartScreen(navController: NavController) {
 
             // ------------------------------ STEP 6 — 누구와 함께 ------------------------------
             if (step == 6) {
-
                 val companions = listOf("혼자", "친구", "가족", "연인", "단체", "기타")
 
                 companions.chunked(3).forEach { row ->
@@ -249,7 +236,7 @@ fun TutorialStartScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 40.dp)
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 40.dp)
+
                     )
                 }
 
@@ -268,19 +255,17 @@ fun TutorialStartScreen(navController: NavController) {
                             customCompanion = companionCustom.ifBlank { null }
                         )
 
-                        // 2) 지금은 일단 로그로 확인 (다음 단계에서 서버로 보낼 거임)
+                        // 2) 로그로 확인
                         Log.d("Tutorial", "tutorialData = $tutorialData")
 
-                        // 3) 원래 하던 대로 퀘스트 화면으로 이동
+                        // 3) 퀘스트 화면으로 이동
                         navController.navigate("quest")
                     },
-                    onClick = { navController.navigate("quest") },
                     enabled = companionList.isNotEmpty(),
                     modifier = Modifier
                         .width(200.dp)
                         .padding(bottom = 40.dp)
                 ) { Text("완료!", color = Color.White) }
-
             }
         }
     }
@@ -295,7 +280,6 @@ fun SelectButtonBlue(text: String, selected: Boolean, onClick: () -> Unit) {
             .width(140.dp)
             .height(50.dp)
             .padding(6.dp),
-        modifier = Modifier.width(140.dp).height(50.dp).padding(6.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary
         ),
@@ -312,12 +296,10 @@ fun ToggleButtonSmall(text: String, selected: Boolean, onClick: () -> Unit) {
             .width(110.dp)
             .height(45.dp)
             .padding(4.dp),
-        modifier = Modifier.width(110.dp).height(45.dp).padding(4.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor =
                 if (selected) MaterialTheme.colorScheme.primary else Color(0xFFBDBDBD)
         ),
         shape = RoundedCornerShape(10.dp)
     ) { Text(text, color = Color.White) }
-}
 }

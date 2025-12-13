@@ -49,12 +49,6 @@ fun MascotRoom(
             // 2. 상단: 퀘스트 진척도 (배치도 위치 참고)
             Spacer(modifier = Modifier.height(60.dp)) // 상단 여백 조절
 
-            QuestProgressUI(
-                current = objects.size,
-                total = 3,
-                onHeaderClick = onQuestTest
-            )
-
             Spacer(modifier = Modifier.weight(1f)) // 중간 여백
 
             Box(
@@ -75,9 +69,9 @@ fun MascotRoom(
                     // index(순서)에 따라 -> (X위치, Y위치, 크기)를 다르게 설정!
                     val (offsetX, offsetY, customSize) = when (index) {
 
-                        0 -> Triple((-120).dp, 170.dp, 90.dp)
-                        1 -> Triple(120.dp, 170.dp, 190.dp)
-                        2 -> Triple(130.dp, 30.dp, 100.dp)
+                        0 -> Triple((-10).dp, 290.dp, 90.dp)
+                        1 -> Triple(130.dp, 170.dp, 200.dp)
+                        2 -> Triple((-130).dp, 170.dp, 200.dp)
 
                         else -> Triple(0.dp, 0.dp, 100.dp)
                     }
@@ -86,7 +80,7 @@ fun MascotRoom(
                         painter = painterResource(id = getObjectResId(objName)),
                         contentDescription = objName,
                         modifier = Modifier
-                            .size(customSize) // ⭐ 여기서 위에서 정한 크기를 적용!
+                            .size(customSize)
                             .offset(x = offsetX, y = offsetY)
                     )
                 }
@@ -95,46 +89,6 @@ fun MascotRoom(
         }
     }
 }
-
-// 🔹 퀘스트 진척도 UI (이전과 동일)
-@Composable
-fun QuestProgressUI(current: Int, total: Int, onHeaderClick: () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "퀘스트 진행도",
-            fontSize = 12.sp,
-            color = Color.DarkGray, // 배경에 맞춰 글씨색 진하게
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable { onHeaderClick() }
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Surface(
-            color = Color.White.copy(alpha = 0.8f), // 배경이 살짝 비치게 반투명 처리
-            shape = RoundedCornerShape(20.dp),
-            shadowElevation = 0.dp // 그림자 제거 (깔끔하게)
-        ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                LinearProgressIndicator(
-                    progress = { if (total > 0) current / total.toFloat() else 0f },
-                    modifier = Modifier.width(100.dp).height(8.dp),
-                    color = Color(0xFFFFD260),
-                    trackColor = Color(0xFFEEEEEE),
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "$current / $total",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.DarkGray
-                )
-            }
-        }
-    }
-}
-
 
 @Composable
 fun JumpingMascot() {
@@ -195,7 +149,7 @@ fun getObjectResId(name: String): Int {
     return when (name) {
         "튀김소보로" -> R.drawable.soboro
         "한빛탑" -> R.drawable.hanbit
-        //"대전엑스포타워" -> R.drawable.obj_tower
+        "대전오월드" -> R.drawable.oworld
         else -> R.drawable.ic_launcher_foreground
     }
 }
