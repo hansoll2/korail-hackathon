@@ -12,7 +12,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".MascotApplication"
+        android:usesCleartextTraffic="true"
+        android:name=".MascotApplication">
+
+    android:name=".MascotApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,6 +24,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Mascot">
+        android:networkSecurityConfig="@xml/network_security_config"
+
 
         <activity
             android:name=".MainActivity"
