@@ -73,7 +73,6 @@ fun HomeLockedScreen(
                     .size(300.dp)
                     .scale(scale)
                     .offset(y = 50.dp)
-                    .clickable { onGoToAR() }
             )
 
             Spacer(modifier = Modifier.height(30.dp))

@@ -6,6 +6,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.mascot.app.data.encyclopediadata.entity.MascotEntity
 import com.mascot.app.data.encyclopediadata.entity.ZoneEntity
+import kotlinx.coroutines.flow.Flow
+
 
 @Dao
 interface MascotDao {
@@ -36,5 +38,15 @@ interface MascotDao {
 
     @Query("SELECT * FROM mascots WHERE id = :id LIMIT 1")
     suspend fun getMascotById(id: Int): MascotEntity?
+
+    @Query("UPDATE mascots SET isCollected = 1 WHERE id = :mascotId")
+    suspend fun markMascotAsCollected(mascotId: Int)
+
+    @Query("SELECT * FROM zones")
+    fun observeZones(): Flow<List<ZoneEntity>>
+
+    @Query("SELECT * FROM mascots")
+    fun observeMascots(): Flow<List<MascotEntity>>
+
 
 }

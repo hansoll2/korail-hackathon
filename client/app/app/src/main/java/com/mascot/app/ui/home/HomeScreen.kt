@@ -12,6 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.mascot.app.ui.Screen
+import androidx.navigation.NavGraph.Companion.findStartDestination
+
 
 @Composable
 fun HomeScreen(
@@ -38,9 +41,11 @@ fun HomeScreen(
                 HomeState.LOCKED -> {
                     HomeLockedScreen(
                         onGoToAR = {
-                            viewModel.onMascotCollected()
+                            navController.navigate(Screen.AR.route) {
+                                popUpTo(navController.graph.findStartDestination().id)
+                                launchSingleTop = true
+                            }
 
-                            // navController.navigate("ar_screen")
                         }
                     )
                 }

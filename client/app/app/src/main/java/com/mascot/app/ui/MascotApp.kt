@@ -54,29 +54,23 @@ fun MascotApp() {
         Screen.Encyclopedia
     )
 
-    // ✨ 구조 변경: Scaffold 대신 Box를 사용하여 겹쳐 그리기(Overlay) 구현
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // 1. 화면 내용 (가장 뒤에 배치)
+        // 1. 메인 화면 영역
         NavHost(
             navController = navController,
             startDestination = Screen.Home.route,
-            modifier = Modifier.fillMaxSize() // 화면 전체를 꽉 채움
+            modifier = Modifier.fillMaxSize()
         ) {
-            // [홈 화면] 패딩 없이 꽉 채움 (배경이 네비게이션 바 뒤까지 내려감)
+
             composable(Screen.Home.route) {
                 HomeScreen(navController)
             }
 
-            // [다른 화면들] 내용이 네비게이션 바에 가려지지 않도록 하단 패딩 추가
-            // (네비게이션 바 높이가 보통 80dp 정도 됩니다)
             composable(Screen.Quest.route) {
                 Box(modifier = Modifier.padding(bottom = 80.dp)) {
                     QuestScreen(navController)
                 }
-            }
-            composable("tutorial_start") {
-                TutorialStartScreen(navController)
             }
 
             composable(Screen.AR.route) {
@@ -104,17 +98,21 @@ fun MascotApp() {
                     )
                 }
             }
+
+            composable("tutorial_start") {
+                TutorialStartScreen(navController)
+            }
+
             composable("completed_quests") {
                 CompletedQuestScreen(navController = navController)
             }
-
         }
 
-            // 2. 네비게이션 바 (화면 위에 덮어씌움)
+        // 2. 하단 네비게이션 바
         NavigationBar(
-            modifier = Modifier.align(Alignment.BottomCenter), // 화면 바닥에 고정
-            containerColor = NavigationBarDefaults.containerColor, // 원래 배경색 유지 (투명 X)
-            tonalElevation = NavigationBarDefaults.Elevation // 원래 그림자 유지
+            modifier = Modifier.align(Alignment.BottomCenter),
+            containerColor = NavigationBarDefaults.containerColor,
+            tonalElevation = NavigationBarDefaults.Elevation
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentDestination = navBackStackEntry?.destination
@@ -123,17 +121,49 @@ fun MascotApp() {
                 NavigationBarItem(
                     icon = { Icon(screen.icon, contentDescription = screen.title) },
                     label = { Text(screen.title) },
-                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    selected = currentDestination
+                        ?.hierarchy
+                        ?.any { it.route == screen.route } == true,
+
+                    // ⭐ 여기 핵심 수정 ⭐
                     onClick = {
-                        navController.navigate(screen.route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+                        when (screen) {
+
+                            Screen.Home -> {
+                                // ✅ Home은 항상 새로 이동 (복원 금지)
+                                navController.navigate(Screen.Home.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                }
                             }
-                            launchSingleTop = true
-                            restoreState = true
+
+                            Screen.AR -> {
+                                // ✅ AR은 특수 화면 (복원 금지)
+                                navController.navigate(Screen.AR.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
+                            }
+
+                            else -> {
+                                // ✅ Quest / Encyclopedia 만 탭 복원 사용
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
                         }
                     },
-                    colors = NavigationBarItemDefaults.colors(
+
+
+                            colors = NavigationBarItemDefaults.colors(
                         indicatorColor = Color(0xFFFFD260).copy(alpha = 0.5f)
                     )
                 )
