@@ -30,11 +30,11 @@ import io.github.sceneview.rememberModelLoader
 import io.github.sceneview.rememberNodes
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
 
 @Composable
 fun ARContent(
-    viewModel: ARViewmodel = hiltViewModel()
+    viewModel: ARViewmodel = hiltViewModel(), // 클래스명 대소문자 확인 (ARViewmodel vs ARViewModel)
+    onCollectionFinished: () -> Unit
 ) {
     val context = LocalContext.current
     val engine = rememberEngine()
@@ -47,7 +47,7 @@ fun ARContent(
     var debugMessage by remember { mutableStateOf("카메라로 '대전' 글자를 찾아보세요") }
     var isProcessing by remember { mutableStateOf(false) }
 
-    //  스로틀링: 마지막 인식 시간 저장 변수
+    // 스로틀링: 마지막 인식 시간 저장 변수
     var lastProcessTime by remember { mutableStateOf(0L) }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -64,8 +64,7 @@ fun ARContent(
             onSessionUpdated = { session, frame ->
                 val currentTime = System.currentTimeMillis()
 
-                // 텍스트 인식 & 배치 로직
-                // 0.5초(500ms) 쿨타임 적용
+                // 텍스트 인식 & 배치 로직 (0.5초 쿨타임)
                 if (!isModelPlaced && !isProcessing &&
                     frame.camera.trackingState == TrackingState.TRACKING &&
                     (currentTime - lastProcessTime > 500)
@@ -73,15 +72,13 @@ fun ARContent(
                     val image = try { frame.acquireCameraImage() } catch (e: Exception) { null }
                     if (image != null) {
                         isProcessing = true
-                        lastProcessTime = currentTime // 시간 갱신
+                        lastProcessTime = currentTime
 
                         // 중앙 크롭 (Crop) 적용
                         val croppedBitmap = cropCenterBitmap(image)
-
                         image.close()
 
                         if (croppedBitmap != null) {
-                            // 크롭된 비트맵으로 입력 이미지 생성 (회전값 90도 유지)
                             val inputImage = InputImage.fromBitmap(croppedBitmap, 90)
 
                             textRecognizer.process(inputImage).addOnSuccessListener { text ->
@@ -111,14 +108,23 @@ fun ARContent(
                                         val modelNode = ModelNode(instance, scaleToUnits = 0.3f).apply {
                                             parent = anchorNode
 
+                                            // 1. 카메라 바라보기
                                             val camPosition = Position(frame.camera.pose.tx(), frame.camera.pose.ty(), frame.camera.pose.tz())
                                             lookAt(camPosition)
+
+                                            // 2. 뒤돌아 있다면 180도 회전
                                             rotation = Rotation(rotation.x, rotation.y + 180f, rotation.z)
 
+                                            // 3. 터치 이벤트
                                             onSingleTapConfirmed = {
-                                                Toast.makeText(context, "마스코트 수집 완료!", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "🎉 마스코트 수집 완료!", Toast.LENGTH_SHORT).show()
+
+                                                // DB 저장 요청
                                                 val detectedMascotId = 1001
                                                 viewModel.onMascotCollected(detectedMascotId)
+
+                                                onCollectionFinished()
+
                                                 true
                                             }
                                         }
@@ -166,7 +172,6 @@ fun cropCenterBitmap(image: Image): Bitmap? {
         val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
         val out = ByteArrayOutputStream()
 
-        // 중앙 50% 영역 계산 (Zoom 효과)
         val cropWidth = image.width / 2
         val cropHeight = image.height / 2
         val left = (image.width - cropWidth) / 2

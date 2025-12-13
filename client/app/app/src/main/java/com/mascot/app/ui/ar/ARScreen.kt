@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.mascot.app.ui.Screen
 
 @Composable
 fun ARScreen(navController: NavHostController) {
@@ -27,7 +28,7 @@ fun ARScreen(navController: NavHostController) {
     // 타겟 설정
     val targetLat = 36.336434
     val targetLon = 127.446116
-    val targetRadiusMeters = 1000.0f
+    val targetRadiusMeters = 1000.0f // 테스트용 1000m
 
     // 내 위치 정보 상태
     var myLocation by remember { mutableStateOf<Location?>(null) }
@@ -50,7 +51,6 @@ fun ARScreen(navController: NavHostController) {
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                 .addOnSuccessListener { loc ->
                     if (loc != null) {
-                        // 위치를 받아왔을 때만 상태 업데이트
                         val res = FloatArray(1)
                         Location.distanceBetween(loc.latitude, loc.longitude, targetLat, targetLon, res)
                         distanceToTarget = res[0]
@@ -83,7 +83,7 @@ fun ARScreen(navController: NavHostController) {
             Text("위치 권한이 필요합니다.")
         }
     } else if (myLocation == null) {
-        // 2. 권한은 있는데 아직 GPS 값을 못 받았을 때
+        // 2. 권한은 있는데 아직 GPS 값을 못 받았을 때 (로딩)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -106,6 +106,13 @@ fun ARScreen(navController: NavHostController) {
         )
     } else {
         // 4. 위치 확인 완료 & 범위 안일 때 -> AR 실행
-        ARContent()
+        ARContent(
+            // 완료 시 튜토리얼 화면으로 이동
+            onCollectionFinished = {
+                navController.navigate("tutorial_start") {
+                    popUpTo(Screen.AR.route) { inclusive = true }
+                }
+            }
+        )
     }
 }
