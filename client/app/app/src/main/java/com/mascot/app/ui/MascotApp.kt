@@ -38,7 +38,7 @@ import com.mascot.app.ui.tutorial.TutorialStartScreen
 sealed class Screen(val route: String, val title: String, val icon: ImageVector) {
     object Home : Screen("home", "홈", Icons.Default.Home)
     object Quest : Screen("quest", "퀘스트", Icons.Default.Star)
-    object AR : Screen("ar", "AR모드", Icons.Default.Search)
+    object AR : Screen("ar", "AR", Icons.Default.Search)
     object Encyclopedia : Screen("encyclopedia", "도감", Icons.Default.List)
     object Detail : Screen("quest_detail/{questId}", "상세정보", Icons.Default.Star)
 }
@@ -59,11 +59,23 @@ fun MascotApp() {
         // 1. 메인 화면 영역
         NavHost(
             navController = navController,
-            startDestination = Screen.Home.route,
+            startDestination = Screen.Home.route, // 시작점은 "home" (인자 없음)
             modifier = Modifier.fillMaxSize()
         ) {
 
-            composable(Screen.Home.route) {
+            // ✨✨ [핵심 수정] 홈 화면이 인자를 받을 수 있도록 설정 변경 ✨✨
+            composable(
+                // 1. 경로 뒤에 ?new_mascot={new_mascot} 를 붙여줍니다.
+                route = "${Screen.Home.route}?new_mascot={new_mascot}",
+
+                // 2. 어떤 인자를 받을지 정의합니다.
+                arguments = listOf(
+                    navArgument("new_mascot") {
+                        type = NavType.BoolType
+                        defaultValue = false // 평소에는 false
+                    }
+                )
+            ) {
                 HomeScreen(navController)
             }
 
@@ -123,15 +135,14 @@ fun MascotApp() {
                     label = { Text(screen.title) },
                     selected = currentDestination
                         ?.hierarchy
-                        ?.any { it.route == screen.route } == true,
+                        // Route 비교 시 쿼리 파라미터를 고려해야 할 수도 있지만,
+                        // hierarchy 체크는 보통 기본 경로를 포함하면 true를 반환하므로 작동합니다.
+                        ?.any { it.route?.startsWith(screen.route) == true } == true,
 
-                    // ⭐ 여기 핵심 수정 ⭐
                     onClick = {
                         when (screen) {
-
                             Screen.Home -> {
-                                // ✅ Home은 항상 새로 이동 (복원 금지)
-                                navController.navigate(Screen.Home.route) {
+                                navController.navigate(Screen.Home.route) { // 기본 "home"으로 이동 (false)
                                     popUpTo(navController.graph.startDestinationId) {
                                         inclusive = true
                                     }
@@ -140,7 +151,6 @@ fun MascotApp() {
                             }
 
                             Screen.AR -> {
-                                // ✅ AR은 특수 화면 (복원 금지)
                                 navController.navigate(Screen.AR.route) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         inclusive = false
@@ -150,7 +160,6 @@ fun MascotApp() {
                             }
 
                             else -> {
-                                // ✅ Quest / Encyclopedia 만 탭 복원 사용
                                 navController.navigate(screen.route) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true
@@ -161,9 +170,7 @@ fun MascotApp() {
                             }
                         }
                     },
-
-
-                            colors = NavigationBarItemDefaults.colors(
+                    colors = NavigationBarItemDefaults.colors(
                         indicatorColor = Color(0xFFFFD260).copy(alpha = 0.5f)
                     )
                 )

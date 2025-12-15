@@ -1,5 +1,8 @@
 package com.mascot.app.ui.home
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -7,28 +10,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.mascot.app.ui.Screen
 import androidx.navigation.NavGraph.Companion.findStartDestination
-
+import com.mascot.app.R
+import com.mascot.app.ui.Screen
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // 1. 뷰모델 상태 구독
     val homeState by viewModel.screenState.collectAsState()
     val objects by viewModel.unlockedObjects.collectAsState()
-
-    // 퀘스트 진행도 (0 ~ 3)
     val questCount by viewModel.questCount.collectAsState()
-
-    // 래플 팝업 표시 여부
     val showRafflePopup by viewModel.showRafflePopup.collectAsState()
 
     Scaffold { padding ->
@@ -38,26 +40,31 @@ fun HomeScreen(
                 .padding(padding)
         ) {
             when (homeState) {
+                // 1. 잠김 상태
                 HomeState.LOCKED -> {
+                    // HomeLockedScreen이 다른 파일에 있다면 자동 import 됩니다.
                     HomeLockedScreen(
                         onGoToAR = {
                             navController.navigate(Screen.AR.route) {
                                 popUpTo(navController.graph.findStartDestination().id)
                                 launchSingleTop = true
                             }
-
                         }
                     )
                 }
 
+                // 2. 수집 직후 팝업 상태
                 HomeState.FIRST_ENTER -> {
+                    // ✨ 이미 다른 파일에 만들어두신 NewFriendPopup을 호출합니다.
                     NewFriendPopup(
-                        onDismiss = { viewModel.finishFirstEnter() }
+                        onDismiss = {
+                            viewModel.finishFirstEnter()
+                        }
                     )
                 }
 
+                // 3. 메인 방 (ROOM)
                 HomeState.ROOM -> {
-                    // (1) 방과 오브제 렌더링
                     MascotRoom(
                         objects = objects,
                         onQuestTest = {
@@ -65,7 +72,7 @@ fun HomeScreen(
                         }
                     )
 
-                    // (2) 퀘스트 진행도 UI (위치 수정됨)
+                    // 퀘스트 진행도 UI
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopCenter)
@@ -86,7 +93,9 @@ fun HomeScreen(
                 }
             }
 
+            // 래플 팝업
             if (showRafflePopup) {
+                // ✨ 이미 다른 파일에 만들어두신 RaffleTicketPopup을 호출합니다.
                 RaffleTicketPopup(
                     onDismiss = { viewModel.closeRafflePopup() }
                 )
@@ -95,14 +104,14 @@ fun HomeScreen(
     }
 }
 
-
+// QuestProgressUI는 HomeScreen 전용이라 여기에 둬도 되지만,
+// 만약 다른 파일에도 있다면 이것도 지워야 합니다. (지금은 남겨둠)
 @Composable
 fun QuestProgressUI(
     current: Int,
     total: Int,
     onHeaderClick: () -> Unit
 ) {
-    // 완료 여부 체크
     val isComplete = current >= total
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {

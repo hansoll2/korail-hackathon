@@ -4,8 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,21 +13,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mascot.app.data.model.QuestItem
 import com.mascot.app.util.LocationHelper
 import com.mascot.app.util.getDistanceMeter
 import kotlinx.coroutines.delay
+import androidx.compose.material.icons.Icons
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestDetailScreen(
     navController: NavController,
-    questId: String?,
-    viewModel: QuestViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    questId: String?
 ) {
+    /* ✅ quest NavGraph에 묶인 ViewModel 공유 */
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("quest")
+    }
+    val viewModel: QuestViewModel = viewModel(parentEntry)
+
+
     val regionsMap by viewModel.quests.collectAsState()
-    val quest: QuestItem? = regionsMap.values.flatten().find { it.id == questId }
+    val quest: QuestItem? =
+        regionsMap.values.flatten().find { it.id == questId }
 
     val context = LocalContext.current
     val activity = context as Activity
@@ -55,7 +64,7 @@ fun QuestDetailScreen(
                 lng2 = quest.coordinates.lng
             )
 
-            if (distance <= 30000) {
+            if (distance <= 1000) {
                 viewModel.completeQuest(quest)
                 resultMessage = "🎉 퀘스트 완료!"
                 completed = true
@@ -65,7 +74,8 @@ fun QuestDetailScreen(
                     popUpTo("quest") { inclusive = false }
                 }
             } else {
-                resultMessage = "❌ 아직 장소에 도착하지 않았어요.\n(거리: ${distance.toInt()}m)"
+                resultMessage =
+                    "❌ 아직 장소에 도착하지 않았어요.\n(거리: ${distance.toInt()}m)"
             }
 
             checkingLocation = false
@@ -78,7 +88,10 @@ fun QuestDetailScreen(
                 title = { Text(quest?.title ?: "퀘스트 상세") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "뒤로가기"
+                        )
                     }
                 }
             )
@@ -119,7 +132,6 @@ fun QuestDetailScreen(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = !checkingLocation && !completed,
                         onClick = {
-
                             val hasPermission =
                                 ContextCompat.checkSelfPermission(
                                     context,

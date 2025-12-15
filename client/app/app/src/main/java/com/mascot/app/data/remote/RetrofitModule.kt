@@ -7,10 +7,9 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitModule {
 
-    // 🔥 에뮬레이터에서 로컬 서버 접근
-    private const val BASE_URL = "http://10.0.2.2:3000/"
+    // 에뮬레이터에서 로컬 서버 접근
+    private const val BASE_URL =  "http://192.168.111.93:3000/"
 
-    // 🔥 GPT 호출 때문에 타임아웃 넉넉히
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
             .connectTimeout(60, TimeUnit.SECONDS)

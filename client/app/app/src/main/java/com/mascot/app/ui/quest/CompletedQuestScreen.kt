@@ -10,14 +10,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompletedQuestScreen(
-    navController: NavController,
-    viewModel: QuestViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    navController: NavController
 ) {
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("quest")
+    }
+    val viewModel: QuestViewModel = viewModel(parentEntry)
+
     val completedQuests by viewModel.completedQuests.collectAsState()
 
     Scaffold(
