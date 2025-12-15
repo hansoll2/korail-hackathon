@@ -8,7 +8,6 @@ import com.mascot.app.data.encyclopediadata.entity.MascotEntity
 import com.mascot.app.data.encyclopediadata.entity.ZoneEntity
 import kotlinx.coroutines.flow.Flow
 
-
 @Dao
 interface MascotDao {
 
@@ -39,14 +38,18 @@ interface MascotDao {
     @Query("SELECT * FROM mascots WHERE id = :id LIMIT 1")
     suspend fun getMascotById(id: Int): MascotEntity?
 
+    // 수집 처리 (isCollected = true 로 변경)
     @Query("UPDATE mascots SET isCollected = 1 WHERE id = :mascotId")
     suspend fun markMascotAsCollected(mascotId: Int)
+
+    // ✨✨ [필수 추가] 수집 여부 확인용 쿼리 ✨✨
+    // ID에 해당하는 마스코트의 수집 여부(Boolean)만 가져옵니다.
+    @Query("SELECT isCollected FROM mascots WHERE id = :id")
+    suspend fun isMascotCollected(id: Int): Boolean
 
     @Query("SELECT * FROM zones")
     fun observeZones(): Flow<List<ZoneEntity>>
 
     @Query("SELECT * FROM mascots")
     fun observeMascots(): Flow<List<MascotEntity>>
-
-
 }

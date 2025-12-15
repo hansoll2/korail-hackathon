@@ -1,5 +1,8 @@
 package com.mascot.app.ui.home
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -7,12 +10,17 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.mascot.app.R
 import com.mascot.app.ui.Screen
 
 @Composable
@@ -61,7 +69,9 @@ fun HomeScreen(
                     }
                 }
 
+                // 2. 수집 직후 팝업 상태
                 HomeState.FIRST_ENTER -> {
+                    // ✨ 이미 다른 파일에 만들어두신 NewFriendPopup을 호출합니다.
                     NewFriendPopup(
                         onDismiss = { viewModel.finishFirstEnter() },
                         onGoToQuest = {
@@ -71,6 +81,7 @@ fun HomeScreen(
                     )
                 }
 
+                // 3. 메인 방 (ROOM)
                 HomeState.ROOM -> {
                     MascotRoom(
                         objects = objects,
@@ -99,6 +110,7 @@ fun HomeScreen(
 
             // 래플 팝업
             if (showRafflePopup) {
+                // ✨ 이미 다른 파일에 만들어두신 RaffleTicketPopup을 호출합니다.
                 RaffleTicketPopup(
                     onDismiss = { viewModel.closeRafflePopup() }
                 )

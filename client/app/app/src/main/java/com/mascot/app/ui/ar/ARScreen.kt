@@ -30,11 +30,9 @@ fun ARScreen(navController: NavHostController) {
     val targetLon = 127.388120
     val targetRadiusMeters = 100.0f // 테스트용 1000m
 
-    // 내 위치 정보 상태
     var myLocation by remember { mutableStateOf<Location?>(null) }
     var distanceToTarget by remember { mutableStateOf(9999f) }
 
-    // 권한 상태
     var hasPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -44,7 +42,6 @@ fun ARScreen(navController: NavHostController) {
 
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
 
-    // 위치 갱신 함수
     @SuppressLint("MissingPermission")
     fun updateLocation() {
         if (hasPermission) {
@@ -60,7 +57,6 @@ fun ARScreen(navController: NavHostController) {
         }
     }
 
-    // 권한 요청 런처
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) {
@@ -68,7 +64,6 @@ fun ARScreen(navController: NavHostController) {
         if (hasPermission) updateLocation()
     }
 
-    // 앱 시작 시 실행
     LaunchedEffect(Unit) {
         if (!hasPermission) {
             permissionLauncher.launch(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION))
@@ -78,12 +73,10 @@ fun ARScreen(navController: NavHostController) {
     }
 
     if (!hasPermission) {
-        // 1. 권한이 없을 때
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text("위치 권한이 필요합니다.")
         }
     } else if (myLocation == null) {
-        // 2. 권한은 있는데 아직 GPS 값을 못 받았을 때 (로딩)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -95,7 +88,6 @@ fun ARScreen(navController: NavHostController) {
             }
         }
     } else if (distanceToTarget > targetRadiusMeters) {
-        // 3. 위치 확인 완료 & 범위 밖일 때 -> 지도 표시
         OutOfRangeScreen(
             currentLat = myLocation!!.latitude,
             currentLon = myLocation!!.longitude,
@@ -105,11 +97,13 @@ fun ARScreen(navController: NavHostController) {
             onRefreshLocation = { updateLocation() }
         )
     } else {
-        // 4. 위치 확인 완료 & 범위 안일 때 -> AR 실행
+        // AR 실행 화면
         ARContent(
-            // 완료 시 튜토리얼 화면으로 이동
+            // 완료 시 홈 화면으로 이동
             onCollectionFinished = {
-                navController.navigate("tutorial_start") {
+
+                navController.navigate("home?new_mascot=true") {
+                    // AR 화면은 스택에서 제거 (뒤로가기 방지)
                     popUpTo(Screen.AR.route) { inclusive = true }
                 }
             }
