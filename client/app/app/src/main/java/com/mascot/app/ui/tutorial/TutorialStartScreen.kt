@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.mascot.app.R
+import com.mascot.app.ui.Screen
 import com.mascot.app.data.tutorial.TutorialData
 import com.mascot.app.data.remote.RetrofitModule
 import kotlinx.coroutines.CoroutineScope
@@ -218,36 +219,16 @@ fun TutorialStartScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    enabled = companionList.isNotEmpty() && !isGenerating,
+                    enabled = companionList.isNotEmpty(),
                     onClick = {
-                        isGenerating = true
-
-                        val tutorialData = TutorialData(
-                            userId = userId,
-                            name = name,
-                            ageRange = ageRange,
-                            gender = gender,
-                            purposes = purposeList.toList(),
-                            companions = companionList.toList()
-                        )
-
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                RetrofitModule.questApi.generateQuestAll(tutorialData)
-                                withContext(Dispatchers.Main) {
-                                    navController.navigate("quest") {
-                                        popUpTo("tutorial_start") { inclusive = true }
-                                    }
-                                }
-                            } catch (e: Exception) {
-                                Log.e("TUTORIAL", "서버 요청 실패: ${e.message}")
-                                withContext(Dispatchers.Main) {
-                                    isGenerating = false
-                                }
-                            }
+                        navController.navigate(Screen.Home.route) {
+                            popUpTo("tutorial_start") { inclusive = true }
                         }
                     }
-                ) { Text("완료!", color = Color.White) }
+                ) {
+                    Text("완료!", color = Color.White)
+                }
+
             }
         }
 

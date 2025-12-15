@@ -21,27 +21,43 @@ import androidx.navigation.NavController
 import com.mascot.app.data.model.QuestItem
 import com.mascot.app.ui.common.QuestItemCard
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestScreen(
-    navController: NavController,
-    viewModel: QuestViewModel = viewModel()
+    navController: NavController
 ) {
+    /* ✅ quest NavGraph 공용 ViewModel */
+    val parentEntry = remember(navController.currentBackStackEntry) {
+        navController.getBackStackEntry("quest")
+    }
+    val viewModel: QuestViewModel = viewModel(parentEntry)
+
     val regions by viewModel.quests.collectAsState()
     val isGenerating by viewModel.loading.collectAsState()
+    val completedQuests by viewModel.completedQuests.collectAsState()
 
     // 🔹 지역 탭
     val regionTabs = listOf("전체", "서구", "유성구", "중구", "동구", "대덕구")
     var selectedRegion by remember { mutableStateOf("전체") }
 
     // 🔹 선택된 지역 퀘스트
-    val displayedQuests: List<QuestItem> = remember(regions, selectedRegion) {
-        if (selectedRegion == "전체") {
-            regions.values.flatten()
-        } else {
-            regions[selectedRegion].orEmpty()
+    val displayedQuests: List<QuestItem> =
+        remember(regions, selectedRegion, completedQuests) {
+
+            val allQuests =
+                if (selectedRegion == "전체") {
+                    regions.values.flatten()
+                } else {
+                    regions[selectedRegion].orEmpty()
+                }
+
+            // ✅ 완료된 퀘스트 제외
+            allQuests.filter { quest ->
+                completedQuests.none { it.id == quest.id }
+            }
         }
-    }
+
 
     Scaffold(
         floatingActionButton = {

@@ -26,8 +26,8 @@ fun ARScreen(navController: NavHostController) {
     val context = LocalContext.current
 
     // 타겟 설정
-    val targetLat = 36.332933
-    val targetLon = 127.432050
+    val targetLat = 36.376710
+    val targetLon = 127.388120
     val targetRadiusMeters = 100.0f // 테스트용 1000m
 
     // 내 위치 정보 상태
