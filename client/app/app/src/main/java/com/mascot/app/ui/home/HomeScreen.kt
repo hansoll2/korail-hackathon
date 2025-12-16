@@ -28,14 +28,10 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    // 상태 구독
     val homeState by viewModel.screenState.collectAsState()
     val objects by viewModel.unlockedObjects.collectAsState()
     val questCount by viewModel.questCount.collectAsState()
     val showRafflePopup by viewModel.showRafflePopup.collectAsState()
-
-    // 🧪 테스트용 팝업 상태
-    var showTestPopup by remember { mutableStateOf(false) }
 
     Scaffold { padding ->
         Box(
@@ -44,39 +40,25 @@ fun HomeScreen(
                 .padding(padding)
         ) {
             when (homeState) {
-
+                // 1. 잠김 상태
                 HomeState.LOCKED -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        // 🧪 테스트 버튼
-                        Button(onClick = { showTestPopup = true }) {
-                            Text("🧪 팝업 테스트")
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        HomeLockedScreen(
-                            onGoToAR = {
-                                navController.navigate(Screen.AR.route) {
-                                    popUpTo(navController.graph.findStartDestination().id)
-                                    launchSingleTop = true
-                                }
+                    // HomeLockedScreen이 다른 파일에 있다면 자동 import 됩니다.
+                    HomeLockedScreen(
+                        onGoToAR = {
+                            navController.navigate(Screen.AR.route) {
+                                popUpTo(navController.graph.findStartDestination().id)
+                                launchSingleTop = true
                             }
-                        )
-                    }
+                        }
+                    )
                 }
 
                 // 2. 수집 직후 팝업 상태
                 HomeState.FIRST_ENTER -> {
                     // ✨ 이미 다른 파일에 만들어두신 NewFriendPopup을 호출합니다.
                     NewFriendPopup(
-                        onDismiss = { viewModel.finishFirstEnter() },
-                        onGoToQuest = {
+                        onDismiss = {
                             viewModel.finishFirstEnter()
-                            navController.navigate(Screen.Quest.route)
                         }
                     )
                 }
@@ -85,9 +67,12 @@ fun HomeScreen(
                 HomeState.ROOM -> {
                     MascotRoom(
                         objects = objects,
-                        onQuestTest = { viewModel.debugProgressQuest() }
+                        onQuestTest = {
+                            viewModel.debugProgressQuest()
+                        }
                     )
 
+                    // 퀘스트 진행도 UI
                     Box(
                         modifier = Modifier
                             .align(Alignment.TopCenter)
@@ -115,21 +100,12 @@ fun HomeScreen(
                     onDismiss = { viewModel.closeRafflePopup() }
                 )
             }
-
-            // 🧪 테스트용 팝업 호출
-            if (showTestPopup) {
-                NewFriendPopup(
-                    onDismiss = { showTestPopup = false },
-                    onGoToQuest = {
-                        showTestPopup = false
-                        navController.navigate(Screen.Quest.route)
-                    }
-                )
-            }
         }
     }
 }
 
+// QuestProgressUI는 HomeScreen 전용이라 여기에 둬도 되지만,
+// 만약 다른 파일에도 있다면 이것도 지워야 합니다. (지금은 남겨둠)
 @Composable
 fun QuestProgressUI(
     current: Int,
@@ -145,14 +121,15 @@ fun QuestProgressUI(
             color = Color.DarkGray,
             fontWeight = FontWeight.Bold,
         )
-
         Spacer(modifier = Modifier.height(8.dp))
 
         Surface(
             color = if (isComplete) Color(0xFFFFE082) else Color.White.copy(alpha = 0.8f),
             shape = RoundedCornerShape(20.dp),
             shadowElevation = if (isComplete) 4.dp else 0.dp,
-            onClick = { onHeaderClick() }
+            onClick = {
+                onHeaderClick()
+            }
         ) {
             Row(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -168,7 +145,6 @@ fun QuestProgressUI(
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
-
                 Text(
                     text = "$current / $total",
                     fontSize = 14.sp,

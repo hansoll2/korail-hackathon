@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitModule {
 
-    // 🔥 에뮬레이터에서 로컬 서버 접근
-    private const val BASE_URL = "http://192.168.111.91:3000/"
+    // 에뮬레이터에서 로컬 서버 접근
+    private const val BASE_URL =  "http://192.168.111.93:3000/"
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()

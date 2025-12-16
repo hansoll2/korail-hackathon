@@ -25,10 +25,9 @@ import com.mascot.app.ui.Screen
 fun ARScreen(navController: NavHostController) {
     val context = LocalContext.current
 
-    // 타겟 설정
-    val targetLat = 36.376710
-    val targetLon = 127.388120
-    val targetRadiusMeters = 100.0f // 테스트용 1000m
+    val targetLat = 36.376188
+    val targetLon = 127.388031
+    val targetRadiusMeters = 100.0f
 
     var myLocation by remember { mutableStateOf<Location?>(null) }
     var distanceToTarget by remember { mutableStateOf(9999f) }
