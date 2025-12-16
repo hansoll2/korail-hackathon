@@ -59,7 +59,7 @@ fun MascotApp() {
         // 1. 메인 화면 영역
         NavHost(
             navController = navController,
-            startDestination = "tutorial_start",
+            startDestination = Screen.Home.route, // 시작점은 "home" (인자 없음)
             modifier = Modifier.fillMaxSize()
         ) {
 

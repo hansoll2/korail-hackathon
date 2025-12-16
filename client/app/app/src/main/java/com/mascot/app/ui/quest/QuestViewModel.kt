@@ -44,5 +44,4 @@ class QuestViewModel(
     fun completeQuest(quest: QuestItem) {
         _completedQuests.value = _completedQuests.value + quest
     }
-
 }

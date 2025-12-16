@@ -26,8 +26,7 @@ import com.mascot.app.R
 
 @Composable
 fun NewFriendPopup(
-    onDismiss: () -> Unit,
-    onGoToQuest: () -> Unit
+    onDismiss: () -> Unit
 ) {
     // DialogProperties를 사용하여 시스템 기본 배경(Dim)을 제거하고 전체 화면을 씁니다.
     Dialog(
@@ -96,28 +95,13 @@ fun NewFriendPopup(
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    // 버튼
+                    Button(
+                        onClick = { onDismiss() },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Button(
-                            onClick = { onDismiss() },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("확인")
-                        }
-
-                        Button(
-                            onClick = { onGoToQuest() },
-                            modifier = Modifier.weight(1f),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFFFD260)
-                            )
-                        ) {
-                            Text("퀘스트 생성")
-                        }
+                        Text("확인")
                     }
-
                 }
             }
         }
